@@ -1,0 +1,38 @@
+#!/bin/bash
+# Author: xingruijiang
+
+declare -A SUBCOMMANDS
+
+SUBCOMMANDS+=( 
+    ["merge"]="set merge_window"
+    ["help"]="help message"
+    ["test"]="a example subcommand"
+)
+
+function usage() {
+    echo ""
+    echo "Usage: $0 COMMAND [arg...]"
+    echo ""
+    echo "Commands:"
+    for key in ${!SUBCOMMANDS[@]}
+    do
+        echo "    ${key}: ${SUBCOMMANDS[${key}]}"
+    done
+    echo ""
+    exit 1
+}
+
+[ $# = 0 ] && usage
+
+subcommand=$(printf "subcommands/%s.sh" $1)
+if [[ -f "${subcommand}" ]]; then
+    shift
+    ${subcommand} $@
+else
+    if [[ $1 = "help" || '-' =~ $1 ]]; then
+        usage
+    else
+        echo "Command $1 doesn't exist..."
+        exit 1
+    fi
+fi
